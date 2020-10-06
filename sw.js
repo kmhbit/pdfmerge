@@ -1,5 +1,5 @@
-var APP_PREFIX = 'SutekinaGen_'     // Identifier for this app (this needs to be consistent across every cache update)
-var VERSION = 'version_02'              // Version of the off-line cache (change this value everytime you want to update cache)
+var APP_PREFIX = 'PDFMerge_'     // Identifier for this app (this needs to be consistent across every cache update)
+var VERSION = 'version_01'              // Version of the off-line cache (change this value everytime you want to update cache)
 var CACHE_NAME = APP_PREFIX + VERSION
 var URLS = [                            // Add URL you want to cache in this list.
     '/',
@@ -13,7 +13,7 @@ var URLS = [                            // Add URL you want to cache in this lis
     '/Montserrat-Bold.woff2',
     '/Montserrat-Italic.woff2',
     '/Montserrat-Light.woff2',
-    '/Montserray-Regular.woff2',
+    '/Montserrat-Regular.woff2',
     '/favicon.ico',
     '/site.webmanifest',
     '/icon.png',
