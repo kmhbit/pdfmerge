@@ -1,0 +1,16 @@
+{
+    "name": "PDF Merge",
+    "short_name": "PDF Merge",
+    "start_url": "https://pdfmerge.desrochers.dev",
+    "lang": "en-US",
+    "icons": [
+        {
+            "src": "/icon.png",
+            "sizes": "260x260",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#ffecd6",
+    "background_color": "#ffecd6",
+    "display": "standalone"
+}

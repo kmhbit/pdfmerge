@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <title>PDF Merge by J-F Desrochers</title>
+        <link rel="canonical" href="https://pdfmerge.desrochers.dev/">
+        <link rel="manifest" href="site.webmanifest">
+        <link rel="shortcut icon" href="favicon.ico">
+        <link href="app.css" rel="stylesheet">
+    </head>
+    <body>
+        <div id="loading">
+            <div>Merging PDFs, please wait...</div>
+            <div class="sk-folding-cube">
+                <div class="sk-cube1 sk-cube"></div>
+                <div class="sk-cube2 sk-cube"></div>
+                <div class="sk-cube4 sk-cube"></div>
+                <div class="sk-cube3 sk-cube"></div>
+            </div>
+        </div>
+        <div id="container"></div>
+        <script>
+            if (navigator.serviceWorker) {
+                navigator.serviceWorker.register('/sw.js', {scope: '/'})
+            }
+        </script>
+        <script src="mithril.min.js"></script>
+        <script src="pdf-lib.min.js"></script>
+        <script src="app.js"></script>
+    </body>
+</html>

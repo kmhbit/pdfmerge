@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>PDF Merge Help</title>
+        <link rel="stylesheet" href="markdown.css">
+
+
+        <style>
+.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
+</style>
+
+
+
+    </head>
+    <body class="vscode-light">
+        <p><a href="/">&lt; Go Back to PDF Merge</a></p>
+<h1 id="pdf-merge-help">PDF Merge Help</h1>
+<p><strong>Contents</strong></p>
+<ul>
+<li><a href="#usage">Usage</a>
+<ul>
+<li><a href="#1---merging-two-or-more-documents">1 - Merging two or more documents</a></li>
+<li><a href="#2---extracting-pages-from-a-document">2 - Extracting pages from a document</a></li>
+<li><a href="#3---re-ordering-pages-in-a-document">3 - Re-ordering pages in a document</a></li>
+</ul>
+</li>
+<li><a href="#ranges">Ranges</a>
+<ul>
+<li><a href="#1---individual-pages">1 - Individual Pages</a></li>
+<li><a href="#2---range-of-pages">2 - Range of Pages</a></li>
+<li><a href="#combining-the-two">Combining the two</a></li>
+</ul>
+</li>
+<li><a href="#limitations">Limitations</a></li>
+<li><a href="#security-and-privacy">Security and Privacy</a></li>
+<li><a href="#acknowledgments">Acknowledgments</a></li>
+</ul>
+<h2 id="usage">Usage</h2>
+<p><strong>PDF Merge</strong> is a simple tool for merging or extracting pages from one or more PDF Document(s) into a new PDF Document. This page will teach you how to use it for most use cases.</p>
+<h3 id="1---merging-two-or-more-documents">1 - Merging two or more documents</h3>
+<p>To combine a number of PDF documents into one:</p>
+<ol>
+<li>Press on <code>Add PDF Document(s)...</code>. A window will open to select your files.</li>
+<li>Select the PDF Documents you want to merge. You can select multiple files at once if they are in the same folder.</li>
+<li>Repeat steps 1 and 2 until you have all your documents in the list.</li>
+<li>If any document in the list has an <code>Error</code>, press on <code>Remove</code> next to it to remove it. See <a href="#limitations">Limitations</a> below for more details.</li>
+<li>If you only want a certain number of pages from some of your documents, enter the desired range in the 'Range' text box. For more information, see <a href="#ranges">Ranges</a> below.</li>
+<li>Enter the desired name for the merged file in the designated text box.</li>
+<li>Press on <code>Merge Documents</code>. The merged file will download automatically and be available in your 'Downloads' folder.</li>
+</ol>
+<h3 id="2---extracting-pages-from-a-document">2 - Extracting pages from a document</h3>
+<p>You can use the Range feature to extract pages from a PDF document:</p>
+<ol>
+<li>Press on <code>Add PDF Document(s)...</code>. A window will open to select your files.</li>
+<li>Select the PDF Document you want to extract pages from.</li>
+<li>If the document in the list has an <code>Error</code>, press on <code>Remove</code> next to it to remove it. You will unfortunately not be able to extract pages from that document. See <a href="#limitations">Limitations</a> below for more details.</li>
+<li>Enter the desired range of pages in the 'Range' text box. For more information, see <a href="#ranges">Ranges</a> below.</li>
+<li>Enter the desired name for the new file containing your extracted pages in the designated text box.</li>
+<li>Press on <code>Extract Pages into New Document</code>. The new file will download automatically and be available in your &quot;Downloads&quot; folder.</li>
+</ol>
+<h3 id="3---re-ordering-pages-in-a-document">3 - Re-ordering pages in a document</h3>
+<p>You can use the Range feature to re-order the pages of a document by adding the same document multiple times. For example, let's assume you have a document called &quot;invoice.pdf&quot; that has 5 pages. Now let's say that you want pages 4 and 5 to be placed before pages 1, 2 and 3. Here's how you would proceed :</p>
+<ol>
+<li>Press on <code>Add PDF Document(s)...</code>. A window will open to select your files.</li>
+<li>Select &quot;invoice.pdf&quot;.</li>
+<li>In the <code>Range</code> text box next to this document, enter <code>4-5</code>.</li>
+<li>Press on <code>Add PDF Document(s)...</code> and, once again, select &quot;invoice.pdf&quot;.</li>
+<li>In the <code>Range</code> text box next to that document, enter <code>1-3</code>.</li>
+<li>Enter &quot;invoice-reordered&quot; in the file name text box.</li>
+<li>Press on <code>Merge Documents</code>. The new file containing your re-ordered pages will download automatically and be available in your 'Downloads' folder.</li>
+</ol>
+<h2 id="ranges">Ranges</h2>
+<p>The Range feature allows you to specify which pages to copy from a PDF document. You can enter the range in two different ways:</p>
+<h3 id="1---individual-pages">1 - Individual Pages</h3>
+<p>You can specify a number of individual pages to include in your merged PDF. Simply enter the number of the pages that you want to keep separated by commas. For example, if you want pages 5, 8, 13 and 16 of a document you would enter the following range: <code>5,8,13,16</code>.</p>
+<h3 id="2---range-of-pages">2 - Range of Pages</h3>
+<p>You can also specify a range of pages to include in the merged PDF. Simply enter the start and the end pages to include separated by an hyphen. Note that both the indicated start and end pages will be included as well. For example, if you want pages 10, 11, 12, 13 and 14 of a document you would enter the following range: <code>10-14</code>.</p>
+<h3 id="combining-the-two">Combining the two</h3>
+<p>Finally, you can combine the two above methods in any way you want. For example, the following range: <code>5,18,21-23,34,65-70</code> would give you the pages 5, 18, 21, 22, 23, 34, 65, 66, 67, 68, 69 and 70 in the new document.</p>
+<h2 id="limitations">Limitations</h2>
+<ul>
+<li><strong>PDF Merge</strong> does not work with <em>encrypted</em> PDF Documents. This is a limitation of the library I use for opening the files. In any case, encrypted documents usually disallow manipulation of any kind so it's probably for the best. It does mean however that some of your PDF Document may unfortunately not work for merging. You will receive an error if that's the case. Simply remove the offending document(s) and the others will work fine.</li>
+<li><strong>PDF Merge</strong> is designed to work on a computer. That doesn't mean it wouldn't work on mobile, but it has not been tested for mobile and thus is unsupported. Also, please make sure to use PDF Merge in a modern web browser (Latest version of Google Chrome, Mozilla Firefox or Microsoft Edge will all work fine).</li>
+</ul>
+<h2 id="security-and-privacy">Security and Privacy</h2>
+<p><strong>PDF Merge</strong> has been designed to work directly inside your web browser locally on your computer. None of your PDF Documents will be uploaded on the internet or leave your computer in any way. In fact, you could completely disconnect your internet right now and it would still work perfectly fine.</p>
+<p>In order to respect and protect your privacy, <strong>PDF Merge</strong> does not use cookies of any kind and does not show any advertisements. Finally, the complete source code of this product, should you want to inspect it, is available <a href="https://github.com/jfdesrochers/pdfmerge">here</a>.</p>
+<h2 id="acknowledgments">Acknowledgments</h2>
+<p><strong>PDF Merge</strong> uses the following third-party libraries:</p>
+<ul>
+<li><strong>PDF-LIB</strong>: A javascript library for reading and writing PDFs. Licensed under MIT. Available <a href="https://pdf-lib.js.org">here</a>.</li>
+<li><strong>Mithril.js</strong>: An excellent small javascript framework for writing single-page applications. Licensed under MIT. Available <a href="https://mithril.js.org">here</a>.</li>
+</ul>
+<p><strong>PDF Merge</strong> is Copyright 2020 by Jean-François Desrochers. MIT License.</p>
+
+    </body>
+    </html>
