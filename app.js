@@ -13,7 +13,6 @@ document.addEventListener('drop', function (event) {
 }, false);
 
 const options = {
-    fileName: `Merged-${new Date().toDateString().replace(/\s/g, '_')}`,
     docs: [],
     errors: []
 }
@@ -114,16 +113,6 @@ class PDFMerge {
         }
     }
 
-    fileNameValidate(optname) {
-        return (evt) => {
-            let val = evt.target.value
-            if (val.endsWith('.pdf')) {
-                val = val.slice(0, val.length - 4)
-            }
-            options[optname] = val
-        }
-    }
-
     rangeValidate(index) {
         return (evt) => {
             let val = evt.target.value
@@ -144,6 +133,7 @@ class PDFMerge {
                 pageCount: 0,
                 range: '',
                 doc: null,
+                type: '',
                 error: false,
                 loading: true
             })
@@ -151,15 +141,27 @@ class PDFMerge {
         }
         for (let i = 0; i < files.length; i++) {
             try {
-                let pdfdata = await loadPDFFile(files[i])
-                let pdfinstance = await PDFLib.PDFDocument.load(pdfdata)
-                let pagecount = pdfinstance.getPageCount()
-                Object.assign(options.docs[baseIndex + i], {
-                    pageCount: pagecount,
-                    range: '1-' + pagecount,
-                    doc: pdfinstance,
-                    loading: false
-                })
+                if (files[i].type.indexOf('pdf') > -1) {
+                    let pdfdata = await loadPDFFile(files[i])
+                    let pdfinstance = await PDFLib.PDFDocument.load(pdfdata)
+                    let pagecount = pdfinstance.getPageCount()
+                    Object.assign(options.docs[baseIndex + i], {
+                        pageCount: pagecount,
+                        range: '1-' + pagecount,
+                        doc: pdfinstance,
+                        type: files[i].type,
+                        loading: false
+                    })
+                } else {
+                    let imageData = await files[i].arrayBuffer();
+                    Object.assign(options.docs[baseIndex + i], {
+                        pageCount: 1,
+                        range: '1-1',
+                        doc: imageData, 
+                        type: files[i].type,
+                        loading: false
+                    })
+                }
                 m.redraw()
             } catch (e) {
                 Object.assign(options.docs[baseIndex + i], {
@@ -208,11 +210,6 @@ class PDFMerge {
 
     async doMerge () {
         options.errors = []
-        if (options.fileName === '') {
-            options.errors.push({doc: 'Merging Error', message: 'Please specify a file name for the merged document.'})
-            m.redraw()
-            return
-        }
         const ranges = new Array(options.docs.length)
         for (let i = 0; i < options.docs.length; i++) {
             ranges[i] = parseRange(i)
@@ -229,27 +226,72 @@ class PDFMerge {
         loading.classList.add('show')
         try {
             const mergedPDF = await PDFLib.PDFDocument.create()
-            mergedPDF.setCreator('PDF Merger by J-F Desrochers')
+            mergedPDF.setCreator('PDF Merge by J-F Desrochers')
             for (let i = 0; i < options.docs.length; i++) {
-                const copiedPages = await mergedPDF.copyPages(options.docs[i].doc, ranges[i])
-                copiedPages.forEach((page) => {
-                    mergedPDF.addPage(page)
-                })
+                if (options.docs[i].type.indexOf('pdf') > -1) {
+                    const copiedPages = await mergedPDF.copyPages(options.docs[i].doc, ranges[i])
+                    copiedPages.forEach((page) => {
+                        mergedPDF.addPage(page)
+                    })
+                } else {
+                    let image;
+                    if (options.docs[i].type.indexOf('png') > -1) {
+                        image = await mergedPDF.embedPng(options.docs[i].doc)
+                    } else if (options.docs[i].type.indexOf('jpeg') > -1) {
+                        image = await mergedPDF.embedJpg(options.docs[i].doc)
+                    } else {
+                        throw new Error('Unrecognized file format for: ' + options.docs[i].fileName)
+                    }
+                    const page = mergedPDF.addPage(PDFLib.PageSizes.Letter)
+                    const margin = 36;
+                    const pageWidth = page.getWidth() - margin * 2
+                    const pageHeight = page.getHeight() - margin * 2
+                    const hRatio = pageWidth / image.width
+                    const vRatio = pageHeight / image.height
+                    const imgDims = image.scale(Math.min(hRatio, vRatio, 1)) // Clamp ratio to 1, i.e. do not enlarge
+                    page.drawImage(image, {
+                        x: pageWidth / 2 - imgDims.width / 2 + margin,
+                        y: pageHeight / 2 - imgDims.height / 2 + margin,
+                        width: imgDims.width,
+                        height: imgDims.height
+                    })
+                }
             }
             const mergedBytes = await mergedPDF.save()
             const mergedBlob = new Blob([mergedBytes])
-            const mergedUrl = URL.createObjectURL(mergedBlob)
-            let el = document.createElement('a')
-            el.href = mergedUrl
-            el.download = options.fileName + '.pdf'
-            el.click()
-            URL.revokeObjectURL(mergedUrl)
-            el = undefined
+            let fileName = `Merged-${new Date().toDateString().replace(/\s/g, '_')}`
+            if ('showSaveFilePicker' in window) {
+                const fileHandler = await window.showSaveFilePicker({
+                    types: [
+                        {
+                            description: 'PDF Document',
+                            accept: {
+                                'application/pdf': ['.pdf'],
+                            },
+                        },
+                    ],
+                    suggestedName: fileName,
+                    excludeAcceptAllOption: true
+                })
+                const writable = await fileHandler.createWritable();
+                await writable.write(mergedBlob);
+                await writable.close();
+            } else {
+                const mergedUrl = URL.createObjectURL(mergedBlob)
+                let el = document.createElement('a')
+                el.href = mergedUrl
+                el.download = fileName + '.pdf'
+                el.click()
+                URL.revokeObjectURL(mergedUrl)
+                el = undefined
+            }
             loading.classList.remove('show')
             m.redraw()
 
         } catch (e) {
-            options.errors.push({doc: 'Merging Error', message: 'An error occured during the merging­. Please try again with different documents.'})
+            if (e.message.indexOf('abort') === -1) {
+                options.errors.push({doc: 'Merging Error', message: 'An error occured during the merging­. Please try again with different documents.'})
+            }
             console.error(e)
             loading.classList.remove('show')
             m.redraw()
@@ -266,7 +308,7 @@ class PDFMerge {
                     m('img.logo-title', {src: 'title.png'}),
                     m('h2.step-title', 'PDF Documents Merge Tool'),
                     m('h3.step-subtitle', [
-                        'Welcome! This small tool will help you merge pages from 1 or more PDF documents into a single file. You can also select the range of pages to extract from a given document. To begin, please press on \'Add PDF Document(s)...\' below.',
+                        'Welcome! This small tool will help you merge pages from 1 or more PDF documents and/or image files into a single file. You can also select the range of pages to extract from a given document. To begin, please press on \'Add PDF Document(s)...\' below.',
                         m('a', {href: 'help.html'}, ' More information...')
                     ]),
                     options.docs.length > 0 ? [
@@ -295,18 +337,16 @@ class PDFMerge {
                         m('.remove-all', m('button.btn.small', {onclick: this.doRemoveAll}, 'Remove All'))
                     ] : '',
                     m('label.btn', {for: 'addfile'}, [
-                        'Add PDF Document(s)...',
+                        'Add PDF Document(s) or images...',
                         m('input#addfile', {
                             type: 'file',
                             onchange: this.handleFileLoad,
                             style: 'display: none',
-                            accept: 'application/pdf',
+                            accept: 'application/pdf, image/jpeg, image/png',
                             multiple: true
                         })
                     ]),
-                    m('label', { for: 'filename' }, 'Enter the desired file name for your merged PDF'),
-                    m('input#filename', { oninput: this.fileNameValidate('fileName'), value: options.fileName }),
-                    m('button.btn', {onclick: this.doMerge, disabled: (options.fileName === '' || options.docs.length < 1 || options.loading)}, options.docs.length === 1 ? 'Extract Pages into New Document' : 'Merge Documents')
+                    m('button.btn.block', {onclick: this.doMerge, disabled: (options.fileName === '' || options.docs.length < 1 || options.loading)}, 'Create New Document')
                 ]),
                 options.errors.length > 0 ? m('.load-error', m('ul', options.errors.map(err => {
                     return m('li', [m('strong', err.doc), ': ' + err.message])

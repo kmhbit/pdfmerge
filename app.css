@@ -197,6 +197,10 @@ input:disabled {
     outline: 0;
 }
 
+.btn.block {
+    display: block;
+}
+
 table {
     width: 100%;
     margin-bottom: 15px;
